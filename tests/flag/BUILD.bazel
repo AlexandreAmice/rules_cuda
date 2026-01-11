@@ -1,4 +1,4 @@
-load("@rules_cuda//cuda:defs.bzl", "cuda_library")
+load("@rules_cuda//cuda:defs.bzl", "cuda_library", "cuda_test")
 load(
     ":flag_validation_test.bzl",
     "cuda_library_c_dbg_flag_test",
@@ -219,6 +219,14 @@ cuda_library(
     tags = ["manual"],
 )
 
+cuda_test(
+    name = "examples_basic_kernel_test_with_flags",
+    srcs = ["@rules_cuda_examples//basic:kernel.cu"],
+    hdrs = ["@rules_cuda_examples//basic:kernel.h"],
+    host_copts = ["-O1"],
+    tags = ["manual"],
+)
+
 cuda_library_flag_test(
     name = "cuda_library_copts_and_host_copts_flag_test",
     action_mnemonic = "CudaCompile",
@@ -230,6 +238,18 @@ cuda_library_flag_test(
         "-Xcompiler -G",
     ],
     target_under_test = "examples_basic_kernel_with_flags",
+)
+
+cuda_library_flag_test(
+    name = "cuda_test_host_copts_flag_test",
+    action_mnemonic = "CudaCompile",
+    contain_flags = [
+        "-Xcompiler -O1",
+    ],
+    not_contain_flags = [
+        "-Xcompiler -G",
+    ],
+    target_under_test = "_examples_basic_kernel_test_with_flags",
 )
 
 cuda_library_flag_test(
